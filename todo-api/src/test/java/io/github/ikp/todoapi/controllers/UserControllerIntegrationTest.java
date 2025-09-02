@@ -42,6 +42,7 @@ public class UserControllerIntegrationTest {
     mockMvc.perform(
         MockMvcRequestBuilders.post("/users")
             .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
     ).andExpect(
         MockMvcResultMatchers.status().isCreated()
@@ -56,6 +57,7 @@ public class UserControllerIntegrationTest {
     mockMvc.perform(
         MockMvcRequestBuilders.post("/users")
             .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.id").isNumber()
@@ -67,7 +69,7 @@ public class UserControllerIntegrationTest {
   public void testThatGetUserSuccessfullyReturnsHttp200OKWhenUserExists()
       throws Exception {
     UserEntity testUser = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUser(testUser);
+    UserEntity savedUser = userService.createUpdateUser(testUser);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/"+savedUser.getId())
@@ -90,7 +92,7 @@ public class UserControllerIntegrationTest {
   public void testThatGetUserSuccessfullyReturnsUserWhenUserExists()
       throws Exception {
     UserEntity testUser = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUser(testUser);
+    UserEntity savedUser = userService.createUpdateUser(testUser);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/"+savedUser.getId())
@@ -114,7 +116,7 @@ public class UserControllerIntegrationTest {
   @Test
   public void testThatMultipleUsersReturnsListOfUsers()
       throws Exception {
-    UserEntity userEntity = userService.createUser(TestDataUtil.createTestUser());
+    UserEntity userEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users")
             .accept(MediaType.APPLICATION_JSON)
@@ -139,7 +141,7 @@ public class UserControllerIntegrationTest {
   @Test
   public void testThatGetAllUsersReturnsListOfUsers()
       throws Exception {
-    UserEntity userEntity = userService.createUser(TestDataUtil.createTestUser());
+    UserEntity userEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/all")
             .accept(MediaType.APPLICATION_JSON)
@@ -150,5 +152,50 @@ public class UserControllerIntegrationTest {
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$[*].name", hasItem(userEntity.getName())));
   }
+  @Test
+  public void testThatUpdateUserSuccessfullyReturnsHttp200OKWhenUserExists()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
+    String userJson = objectMapper.writeValueAsString(UserEntity.builder().name("Rogi").build());
+    mockMvc.perform(
+        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(userJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+  @Test
+  public void testThatUpdateUserSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
+      throws Exception {
+    UserEntity userEntity = UserEntity.builder().id(1L).name("").build();
+    String userJson = objectMapper.writeValueAsString(userEntity);
+    mockMvc.perform(
+        MockMvcRequestBuilders.put("/users/"+userEntity.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(userJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatUpdateUserSuccessfullyUpdatesUser()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
+    UserEntity updatedUserEntity = UserEntity.builder().id(savedUserEntity.getId()).name("test").build();
 
+    String userJson = objectMapper.writeValueAsString(updatedUserEntity);
+    mockMvc.perform(
+        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(userJson)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.id").value(savedUserEntity.getId())
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.name").value(updatedUserEntity.getName())
+    );
+  }
 }

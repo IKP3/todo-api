@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface UserService {
-  UserEntity createUser(UserEntity userEntity);
+  UserEntity createUpdateUser(UserEntity userEntity);
 
   Optional<UserEntity> getUser(Long id);
 
   List<UserEntity> getMultipleUsers();
   Page<UserEntity> getMultipleUsers(Pageable pageable);
+
+  boolean existsById(Long id);
 }

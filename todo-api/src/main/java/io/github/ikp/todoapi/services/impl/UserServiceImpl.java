@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     this.userRepository = userRepository;
   }
   @Override
-  public UserEntity createUser(UserEntity userEntity) {
+  public UserEntity createUpdateUser(UserEntity userEntity) {
     return userRepository.save(userEntity);
   }
 
@@ -40,4 +40,10 @@ public class UserServiceImpl implements UserService {
   public Page<UserEntity> getMultipleUsers(Pageable pageable) {
     return userRepository.findAll(pageable);
   }
+
+  @Override
+  public boolean existsById(Long id) {
+    return userRepository.existsById(id);
+  }
+
 }

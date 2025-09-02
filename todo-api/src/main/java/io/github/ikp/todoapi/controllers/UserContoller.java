@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +29,7 @@ public class UserContoller {
   @PostMapping(path = "/users")
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     UserEntity userEntity = userMapper.mapFrom(userDto);
-    UserEntity savedUserEntity = userService.createUser(userEntity);
+    UserEntity savedUserEntity = userService.createUpdateUser(userEntity);
     return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
   }
   @GetMapping(path = "/users/{id}")
@@ -51,5 +52,18 @@ public class UserContoller {
     return users.stream()
         .map(userMapper::mapTo)
         .collect(Collectors.toList());
+  }
+  @PutMapping("/users/{id}")
+  public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+
+    if (!userService.existsById(id)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    UserEntity userEntity = userMapper.mapFrom(userDto);
+    userEntity.setId(id);
+    UserEntity updated = userService.createUpdateUser(userEntity);
+
+    return ResponseEntity.ok(userMapper.mapTo(updated));
   }
 }
