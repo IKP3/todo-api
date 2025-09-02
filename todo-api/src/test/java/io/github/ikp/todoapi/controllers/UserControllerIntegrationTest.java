@@ -1,8 +1,11 @@
 package io.github.ikp.todoapi.controllers;
 
+import static org.hamcrest.Matchers.hasItem;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.ikp.todoapi.TestDataUtil;
 import io.github.ikp.todoapi.domain.dto.UserDto;
+import io.github.ikp.todoapi.domain.entities.UserEntity;
 import io.github.ikp.todoapi.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +62,93 @@ public class UserControllerIntegrationTest {
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.name").value("Igor")
     );
+  }
+  @Test
+  public void testThatGetUserSuccessfullyReturnsHttp200OKWhenUserExists()
+      throws Exception {
+    UserEntity testUser = TestDataUtil.createTestUser();
+    UserEntity savedUser = userService.createUser(testUser);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/"+savedUser.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+  @Test
+  public void testThatGetUserSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
+      throws Exception {
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/1")
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatGetUserSuccessfullyReturnsUserWhenUserExists()
+      throws Exception {
+    UserEntity testUser = TestDataUtil.createTestUser();
+    UserEntity savedUser = userService.createUser(testUser);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/"+savedUser.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.id").value(savedUser.getId())
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.name").value(savedUser.getName())
+    );
+  }
+  @Test
+  public void testThatGetMultipleUsersSuccessfullyReturnsHttp200OK()
+      throws Exception {
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users")
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+  @Test
+  public void testThatMultipleUsersReturnsListOfUsers()
+      throws Exception {
+    UserEntity userEntity = userService.createUser(TestDataUtil.createTestUser());
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users")
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.content").isArray()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.content[*].id").isNotEmpty()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.content[*].name", hasItem(userEntity.getName())));
+  }
+  @Test
+  public void testThatGetAllUsersSuccessfullyReturnsHttp200OK()
+      throws Exception {
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/all")
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+
+  @Test
+  public void testThatGetAllUsersReturnsListOfUsers()
+      throws Exception {
+    UserEntity userEntity = userService.createUser(TestDataUtil.createTestUser());
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/all")
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$").isArray()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$[*].id").isNotEmpty()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$[*].name", hasItem(userEntity.getName())));
   }
 
 }
