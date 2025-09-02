@@ -244,4 +244,42 @@ public class UserControllerIntegrationTest {
         MockMvcResultMatchers.jsonPath("$.name").value(updatedUserEntity.getName())
     );
   }
+  @Test
+  public void testThatDeleteUserSuccessfullyReturnsHttp204NoContentWhenUserExists()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
+    mockMvc.perform(
+        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNoContent()
+    );
+  }
+  @Test
+  public void testThatDeleteUserSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
+      throws Exception {
+    UserEntity savedUserEntity = TestDataUtil.createTestUser();
+    savedUserEntity.setId(1L);
+    mockMvc.perform(
+        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatDeleteUserSuccessfullyDeletesUser()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
+    mockMvc.perform(
+        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    );
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/"+savedUserEntity.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
 }

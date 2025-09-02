@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,7 +55,7 @@ public class UserContoller {
         .map(userMapper::mapTo)
         .collect(Collectors.toList());
   }
-  @PutMapping("/users/{id}")
+  @PutMapping(path = "/users/{id}")
   public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
 
     if (!userService.existsById(id)) {
@@ -67,7 +68,7 @@ public class UserContoller {
 
     return ResponseEntity.ok(userMapper.mapTo(updated));
   }
-  @PatchMapping("/users/{id}")
+  @PatchMapping(path = "/users/{id}")
   public ResponseEntity<UserDto> partialUpdateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
 
     if (!userService.existsById(id)) {
@@ -79,5 +80,13 @@ public class UserContoller {
     UserEntity updated = userService.partialUpdateUser(id,userEntity);
 
     return ResponseEntity.ok(userMapper.mapTo(updated));
+  }
+  @DeleteMapping(path = "/users/{id}")
+  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    if (!userService.existsById(id)) {
+      return ResponseEntity.notFound().build();
+    }
+    userService.deleteUser(id);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
