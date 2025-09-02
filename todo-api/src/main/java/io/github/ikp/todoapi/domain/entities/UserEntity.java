@@ -17,8 +17,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users")
 public class UserEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_id_seq")
   private  Long id;
+
   private String name;
 }

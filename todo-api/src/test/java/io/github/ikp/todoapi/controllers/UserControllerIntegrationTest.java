@@ -24,9 +24,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 public class UserControllerIntegrationTest {
-  private MockMvc mockMvc;
-  private ObjectMapper objectMapper;
-  private UserService userService;
+  private final MockMvc mockMvc;
+  private final ObjectMapper objectMapper;
+  private final UserService userService;
   @Autowired
   public UserControllerIntegrationTest(MockMvc mockMvc, UserService userService) {
     this.mockMvc = mockMvc;
