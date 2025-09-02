@@ -46,4 +46,13 @@ public class UserServiceImpl implements UserService {
     return userRepository.existsById(id);
   }
 
+  @Override
+  public UserEntity partialUpdateUser(Long id, UserEntity userEntity) {
+    userEntity.setId(id);
+    return userRepository.findById(id).map(existinAuthor ->{
+      Optional.ofNullable(userEntity.getName()).ifPresent(existinAuthor::setName);
+      return userRepository.save(existinAuthor);
+    }).orElseThrow(()->new RuntimeException("User does not exist"));
+  }
+
 }

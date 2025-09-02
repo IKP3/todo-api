@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,10 +60,23 @@ public class UserContoller {
     if (!userService.existsById(id)) {
       return ResponseEntity.notFound().build();
     }
-
+    userDto.setId(id);
     UserEntity userEntity = userMapper.mapFrom(userDto);
     userEntity.setId(id);
     UserEntity updated = userService.createUpdateUser(userEntity);
+
+    return ResponseEntity.ok(userMapper.mapTo(updated));
+  }
+  @PatchMapping("/users/{id}")
+  public ResponseEntity<UserDto> partialUpdateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+
+    if (!userService.existsById(id)) {
+      return ResponseEntity.notFound().build();
+    }
+
+    UserEntity userEntity = userMapper.mapFrom(userDto);
+    userEntity.setId(id);
+    UserEntity updated = userService.partialUpdateUser(id,userEntity);
 
     return ResponseEntity.ok(userMapper.mapTo(updated));
   }

@@ -17,4 +17,6 @@ public interface UserService {
   Page<UserEntity> getMultipleUsers(Pageable pageable);
 
   boolean existsById(Long id);
+
+  UserEntity partialUpdateUser(Long id, UserEntity userEntity);
 }
