@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TaskController {
   @GetMapping(path = "/tasks")
-  public String  test(){
+  public String test(){
     return "Hello World!";
   }
 
