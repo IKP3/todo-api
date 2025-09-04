@@ -3,6 +3,7 @@ package io.github.ikp.todoapi.services.impl;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.repositories.TaskRepository;
 import io.github.ikp.todoapi.services.TaskService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +21,10 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public Optional<TaskEntity> getTask(Long userId, Long taskId) {
     return taskRepository.findByIdAndUserId(taskId,userId);
+  }
+
+  @Override
+  public List<TaskEntity> getMultipleTasks(Long userId) {
+    return taskRepository.findByUserId(userId);
   }
 }

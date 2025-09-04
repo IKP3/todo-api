@@ -6,7 +6,9 @@ import io.github.ikp.todoapi.mappers.Mapper;
 import io.github.ikp.todoapi.repositories.UserRepository;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,5 +46,12 @@ public class TaskController {
       TaskDto taskDto = taskMapper.mapTo(task);
       return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  }
+  @GetMapping(path = "/users/{userId}/tasks/all")
+  public List<TaskDto> getAllTasks(@PathVariable Long userId){
+    List<TaskEntity> tasks = taskService.getMultipleTasks(userId);
+    return tasks.stream()
+        .map(taskMapper::mapTo)
+        .collect(Collectors.toList());
   }
 }

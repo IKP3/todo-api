@@ -21,6 +21,11 @@ public class TestDataUtil {
         .description("test")
         .build();
   }
+  public static TaskEntity createTestTask2() {
+    return TaskEntity.builder()
+        .description("test2")
+        .build();
+  }
   public static TaskDto createTestTaskDto() {
     return TaskDto.builder()
         .description("test")

@@ -1,6 +1,7 @@
 package io.github.ikp.todoapi.controllers;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.ikp.todoapi.TestDataUtil;
@@ -117,11 +118,14 @@ public class UserControllerIntegrationTest {
   public void testThatMultipleUsersReturnsListOfUsers()
       throws Exception {
     UserEntity userEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
+    UserEntity userEntity2 = userService.createUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.content").isArray()
+    ).andExpect(
+            MockMvcResultMatchers.jsonPath("$.content", hasSize(2))
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.content[*].id").isNotEmpty()
     ).andExpect(
@@ -142,11 +146,14 @@ public class UserControllerIntegrationTest {
   public void testThatGetAllUsersReturnsListOfUsers()
       throws Exception {
     UserEntity userEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
+    UserEntity userEntity2 = userService.createUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/all")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$").isArray()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$", hasSize(2))
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$[*].id").isNotEmpty()
     ).andExpect(
