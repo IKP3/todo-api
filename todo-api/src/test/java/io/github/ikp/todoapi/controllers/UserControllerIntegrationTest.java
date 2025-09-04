@@ -156,7 +156,7 @@ public class UserControllerIntegrationTest {
   public void testThatUpdateUserSuccessfullyReturnsHttp200OKWhenUserExists()
       throws Exception {
     UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
-    String userJson = objectMapper.writeValueAsString(UserEntity.builder().name("Rogi").build());
+    String userJson = objectMapper.writeValueAsString(UserDto.builder().name("Rogi").build());
     mockMvc.perform(
         MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -169,10 +169,10 @@ public class UserControllerIntegrationTest {
   @Test
   public void testThatUpdateUserSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
       throws Exception {
-    UserEntity userEntity = UserEntity.builder().id(1L).name("").build();
-    String userJson = objectMapper.writeValueAsString(userEntity);
+    UserDto userDto = UserDto.builder().id(1L).name("").build();
+    String userJson = objectMapper.writeValueAsString(userDto);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+userEntity.getId())
+        MockMvcRequestBuilders.put("/users/"+userDto.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -184,9 +184,9 @@ public class UserControllerIntegrationTest {
   public void testThatUpdateUserSuccessfullyUpdatesUser()
       throws Exception {
     UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
-    UserEntity updatedUserEntity = UserEntity.builder().id(savedUserEntity.getId()).name("test").build();
+    UserDto updatedUser = UserDto.builder().id(savedUserEntity.getId()).name("test").build();
 
-    String userJson = objectMapper.writeValueAsString(updatedUserEntity);
+    String userJson = objectMapper.writeValueAsString(updatedUser);
     mockMvc.perform(
         MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -195,14 +195,14 @@ public class UserControllerIntegrationTest {
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.id").value(savedUserEntity.getId())
     ).andExpect(
-        MockMvcResultMatchers.jsonPath("$.name").value(updatedUserEntity.getName())
+        MockMvcResultMatchers.jsonPath("$.name").value(updatedUser.getName())
     );
   }
   @Test
   public void testThatPartialUpdateUserSuccessfullyReturnsHttp200OKWhenUserExists()
       throws Exception {
     UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
-    String userJson = objectMapper.writeValueAsString(UserEntity.builder().name("Rogi").build());
+    String userJson = objectMapper.writeValueAsString(UserDto.builder().name("Rogi").build());
     mockMvc.perform(
         MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -215,10 +215,10 @@ public class UserControllerIntegrationTest {
   @Test
   public void testThatPartialUpdateUserSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
       throws Exception {
-    UserEntity userEntity = UserEntity.builder().id(1L).name("").build();
-    String userJson = objectMapper.writeValueAsString(userEntity);
+    UserDto userDto = UserDto.builder().id(1L).name("").build();
+    String userJson = objectMapper.writeValueAsString(userDto);
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+userEntity.getId())
+        MockMvcRequestBuilders.patch("/users/"+userDto.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -230,9 +230,9 @@ public class UserControllerIntegrationTest {
   public void testThatPartialUpdateUserSuccessfullyUpdatesUser()
       throws Exception {
     UserEntity savedUserEntity = userService.createUpdateUser(TestDataUtil.createTestUser());
-    UserEntity updatedUserEntity = UserEntity.builder().id(savedUserEntity.getId()).name("test").build();
+    UserDto updatedUserDto = UserDto.builder().id(savedUserEntity.getId()).name("test").build();
 
-    String userJson = objectMapper.writeValueAsString(updatedUserEntity);
+    String userJson = objectMapper.writeValueAsString(updatedUserDto);
     mockMvc.perform(
         MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -241,7 +241,7 @@ public class UserControllerIntegrationTest {
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.id").value(savedUserEntity.getId())
     ).andExpect(
-        MockMvcResultMatchers.jsonPath("$.name").value(updatedUserEntity.getName())
+        MockMvcResultMatchers.jsonPath("$.name").value(updatedUserDto.getName())
     );
   }
   @Test

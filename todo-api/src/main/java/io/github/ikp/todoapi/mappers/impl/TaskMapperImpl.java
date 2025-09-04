@@ -1,24 +1,24 @@
 package io.github.ikp.todoapi.mappers.impl;
 
 import io.github.ikp.todoapi.domain.dto.TaskDto;
+import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.mappers.Mapper;
 import org.modelmapper.ModelMapper;
-import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TaskMapperImpl implements Mapper<Task, TaskDto> {
+public class TaskMapperImpl implements Mapper<TaskEntity, TaskDto> {
   private final ModelMapper modelMapper;
   public TaskMapperImpl(final ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
   }
   @Override
-  public TaskDto mapTo(Task task) {
+  public TaskDto mapTo(TaskEntity task) {
     return modelMapper.map(task, TaskDto.class);
   }
 
   @Override
-  public Task mapFrom(TaskDto taskDto) {
-    return modelMapper.map(taskDto, Task.class);
+  public TaskEntity mapFrom(TaskDto taskDto) {
+    return modelMapper.map(taskDto, TaskEntity.class);
   }
 }

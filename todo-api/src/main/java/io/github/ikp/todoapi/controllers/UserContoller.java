@@ -34,9 +34,9 @@ public class UserContoller {
     UserEntity savedUserEntity = userService.createUpdateUser(userEntity);
     return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
   }
-  @GetMapping(path = "/users/{id}")
-  public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
-    Optional<UserEntity> foundUser = userService.getUser(id);
+  @GetMapping(path = "/users/{userId}")
+  public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
+    Optional<UserEntity> foundUser = userService.getUser(userId);
 
     return foundUser.map(userEntity -> {
       UserDto userDto = userMapper.mapTo(userEntity);
@@ -55,38 +55,37 @@ public class UserContoller {
         .map(userMapper::mapTo)
         .collect(Collectors.toList());
   }
-  @PutMapping(path = "/users/{id}")
-  public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+  @PutMapping(path = "/users/{userId}")
+  public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
 
-    if (!userService.existsById(id)) {
+    if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();
     }
-    userDto.setId(id);
     UserEntity userEntity = userMapper.mapFrom(userDto);
-    userEntity.setId(id);
+    userEntity.setId(userId);
     UserEntity updated = userService.createUpdateUser(userEntity);
 
     return ResponseEntity.ok(userMapper.mapTo(updated));
   }
-  @PatchMapping(path = "/users/{id}")
-  public ResponseEntity<UserDto> partialUpdateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+  @PatchMapping(path = "/users/{userId}")
+  public ResponseEntity<UserDto> partialUpdateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
 
-    if (!userService.existsById(id)) {
+    if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();
     }
 
     UserEntity userEntity = userMapper.mapFrom(userDto);
-    userEntity.setId(id);
-    UserEntity updated = userService.partialUpdateUser(id,userEntity);
+    userEntity.setId(userId);
+    UserEntity updated = userService.partialUpdateUser(userId,userEntity);
 
     return ResponseEntity.ok(userMapper.mapTo(updated));
   }
-  @DeleteMapping(path = "/users/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    if (!userService.existsById(id)) {
+  @DeleteMapping(path = "/users/{userId}")
+  public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+    if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();
     }
-    userService.deleteUser(id);
+    userService.deleteUser(userId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
