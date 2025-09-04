@@ -1,12 +1,16 @@
 package io.github.ikp.todoapi.repositories;
 
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaskRepository extends CrudRepository<TaskEntity, Long>,
     PagingAndSortingRepository<TaskEntity, Long> {
-
+  @Query("select t from TaskEntity t where t.id = :taskId and t.user.id = :userId")
+  Optional<TaskEntity> findByIdAndUserId(@Param("taskId") Long taskId, @Param("userId") Long userId);
 }

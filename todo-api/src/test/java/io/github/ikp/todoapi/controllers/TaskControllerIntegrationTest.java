@@ -3,6 +3,7 @@ package io.github.ikp.todoapi.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.ikp.todoapi.TestDataUtil;
 import io.github.ikp.todoapi.domain.dto.TaskDto;
+import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
@@ -88,5 +89,51 @@ public class TaskControllerIntegrationTest {
         MockMvcResultMatchers.jsonPath("$.description").value(taskEntity.getDescription())
     );
 
+  }
+  @Test
+  public void testThatGetTaskSuccessfullyReturnsHttp200OkWhenTaskExists()
+      throws Exception {
+    UserEntity userEntity = TestDataUtil.createTestUser();
+    UserEntity savedUser = userService.createUpdateUser(userEntity);
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUser);
+    taskService.saveTask(taskEntity);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
+        .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+  @Test
+  public void testThatGetTaskSuccessfullyReturnsHttp404NotFoundWhenTaskDoesNotExist()
+      throws Exception {
+    UserEntity userEntity = TestDataUtil.createTestUser();
+    UserEntity savedUser = userService.createUpdateUser(userEntity);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+1)
+        .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatGetTaskSuccessfullyReturnsTaskWhenTaskExists()
+      throws Exception {
+    UserEntity userEntity = TestDataUtil.createTestUser();
+    UserEntity savedUser = userService.createUpdateUser(userEntity);
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUser);
+    taskService.saveTask(taskEntity);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
+        .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.id").isNumber()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.description").value(taskEntity.getDescription())
+    );
   }
 }
