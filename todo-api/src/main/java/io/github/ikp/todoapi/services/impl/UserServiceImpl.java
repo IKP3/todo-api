@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     this.userRepository = userRepository;
   }
   @Override
-  public UserEntity createUpdateUser(UserEntity userEntity) {
+  public UserEntity createOrUpdateUser(UserEntity userEntity) {
     return userRepository.save(userEntity);
   }
 

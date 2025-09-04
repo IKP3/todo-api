@@ -2,9 +2,7 @@ package io.github.ikp.todoapi.controllers;
 
 import io.github.ikp.todoapi.domain.dto.TaskDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
-import io.github.ikp.todoapi.domain.entities.UserEntity;
 import io.github.ikp.todoapi.mappers.Mapper;
-import io.github.ikp.todoapi.repositories.UserRepository;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
 import java.util.List;
@@ -17,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +36,7 @@ public class TaskController {
         .map(user -> {
           TaskEntity task = taskMapper.mapFrom(taskDto);
           task.setUser(user);
-          TaskEntity saved = taskService.saveTask(task);
+          TaskEntity saved = taskService.createOrUpdateTask(task);
           return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.CREATED);
         })
         .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -61,5 +60,16 @@ public class TaskController {
   public Page<TaskDto> getMultipleTasks(@PathVariable Long userId, Pageable pageable){
     Page<TaskEntity> tasks = taskService.getMultipleTasks(userId,pageable);
     return tasks.map(taskMapper::mapTo);
+  }
+  @PutMapping(path = "/users/{userId}/tasks/{taskId}")
+  public ResponseEntity<TaskDto> updateTask( @PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskDto taskDto){
+    return taskService.getTask(userId,taskId)
+        .map(task -> {
+          TaskEntity taskEntity = taskMapper.mapFrom(taskDto);
+          taskEntity.setId(taskId);
+          taskEntity.setUser(task.getUser());
+          TaskEntity saved = taskService.createOrUpdateTask(taskEntity);
+          return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 }

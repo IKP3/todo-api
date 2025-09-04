@@ -31,7 +31,7 @@ public class UserContoller {
   @PostMapping(path = "/users")
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     UserEntity userEntity = userMapper.mapFrom(userDto);
-    UserEntity savedUserEntity = userService.createUpdateUser(userEntity);
+    UserEntity savedUserEntity = userService.createOrUpdateUser(userEntity);
     return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
   }
   @GetMapping(path = "/users/{userId}")
@@ -63,7 +63,7 @@ public class UserContoller {
     }
     UserEntity userEntity = userMapper.mapFrom(userDto);
     userEntity.setId(userId);
-    UserEntity updated = userService.createUpdateUser(userEntity);
+    UserEntity updated = userService.createOrUpdateUser(userEntity);
 
     return ResponseEntity.ok(userMapper.mapTo(updated));
   }

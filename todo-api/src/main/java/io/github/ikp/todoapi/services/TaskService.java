@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TaskService {
 
-  TaskEntity saveTask(TaskEntity task);
+  TaskEntity createOrUpdateTask(TaskEntity task);
 
   Optional<TaskEntity> getTask(Long userId, Long taskId);
 
   List<TaskEntity> getMultipleTasks(Long userId);
   Page<TaskEntity> getMultipleTasks(Long userId, Pageable pageable);
+
+  boolean existsById(Long taskId);
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface UserService {
-  UserEntity createUpdateUser(UserEntity userEntity);
+  UserEntity createOrUpdateUser(UserEntity userEntity);
 
   Optional<UserEntity> getUser(Long id);
 

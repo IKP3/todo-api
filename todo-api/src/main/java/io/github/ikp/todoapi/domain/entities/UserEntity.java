@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class UserEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_id_seq")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
   private  Long id;
 
   private String name;

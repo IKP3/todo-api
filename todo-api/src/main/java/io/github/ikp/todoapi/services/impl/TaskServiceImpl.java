@@ -16,7 +16,7 @@ public class TaskServiceImpl implements TaskService {
     this.taskRepository = taskRepository;
   }
   @Override
-  public TaskEntity saveTask(TaskEntity task) {
+  public TaskEntity createOrUpdateTask(TaskEntity task) {
     return taskRepository.save(task);
   }
 
@@ -33,5 +33,10 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public Page<TaskEntity> getMultipleTasks(Long userId, Pageable pageable) {
     return taskRepository.findByUserId(userId, pageable);
+  }
+
+  @Override
+  public boolean existsById(Long taskId) {
+    return taskRepository.existsById(taskId);
   }
 }

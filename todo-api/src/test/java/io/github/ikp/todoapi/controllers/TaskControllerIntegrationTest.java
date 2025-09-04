@@ -6,11 +6,11 @@ import static org.hamcrest.Matchers.hasSize;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.ikp.todoapi.TestDataUtil;
 import io.github.ikp.todoapi.domain.dto.TaskDto;
+import io.github.ikp.todoapi.domain.dto.UserDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
-import org.h2.util.Task;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class TaskControllerIntegrationTest {
   public void testThatSaveTaskSuccessfullyReturnsHttp201Created()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     TaskDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
@@ -61,7 +61,7 @@ public class TaskControllerIntegrationTest {
   public void testThatSaveTaskSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     TaskDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
@@ -78,7 +78,7 @@ public class TaskControllerIntegrationTest {
   public void testThatCreateTaskSuccessfullyReturnsSavedTask()
     throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     TaskDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
@@ -98,11 +98,11 @@ public class TaskControllerIntegrationTest {
   public void testThatGetTaskSuccessfullyReturnsHttp200OkWhenTaskExists()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     TaskEntity taskEntity = TestDataUtil.createTestTask();
     taskEntity.setUser(savedUser);
-    taskService.saveTask(taskEntity);
+    taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
         .accept(MediaType.APPLICATION_JSON)
@@ -114,7 +114,7 @@ public class TaskControllerIntegrationTest {
   public void testThatGetTaskSuccessfullyReturnsHttp404NotFoundWhenTaskDoesNotExist()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+1)
         .accept(MediaType.APPLICATION_JSON)
@@ -126,11 +126,11 @@ public class TaskControllerIntegrationTest {
   public void testThatGetTaskSuccessfullyReturnsTaskWhenTaskExists()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     TaskEntity taskEntity = TestDataUtil.createTestTask();
     taskEntity.setUser(savedUser);
-    taskService.saveTask(taskEntity);
+    taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
         .accept(MediaType.APPLICATION_JSON)
@@ -145,10 +145,10 @@ public class TaskControllerIntegrationTest {
   public void testThatGetAllTasksSuccessfullyReturnsHttp200OK()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
     TaskEntity taskEntity = TestDataUtil.createTestTask();
     taskEntity.setUser(savedUser);
-    taskService.saveTask(taskEntity);
+    taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/all")
@@ -161,15 +161,15 @@ public class TaskControllerIntegrationTest {
   public void testThatGetAllTasksReturnsListOfTasks()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     TaskEntity taskEntity = TestDataUtil.createTestTask();
     taskEntity.setUser(savedUser);
-    taskService.saveTask(taskEntity);
+    taskService.createOrUpdateTask(taskEntity);
 
     TaskEntity taskEntity2 = TestDataUtil.createTestTask2();
     taskEntity2.setUser(savedUser);
-    taskService.saveTask(taskEntity2);
+    taskService.createOrUpdateTask(taskEntity2);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/all")
@@ -188,10 +188,10 @@ public class TaskControllerIntegrationTest {
   public void testThatGetMultipleTasksSuccessfullyReturnsHttp200OK()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
     TaskEntity taskEntity = TestDataUtil.createTestTask();
     taskEntity.setUser(savedUser);
-    taskService.saveTask(taskEntity);
+    taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks")
@@ -204,15 +204,15 @@ public class TaskControllerIntegrationTest {
   public void testThatGetMultipleTasksReturnsListOfTasks()
       throws Exception {
     UserEntity userEntity = TestDataUtil.createTestUser();
-    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
     TaskEntity taskEntity = TestDataUtil.createTestTask();
     taskEntity.setUser(savedUser);
-    taskService.saveTask(taskEntity);
+    taskService.createOrUpdateTask(taskEntity);
 
     TaskEntity taskEntity2 = TestDataUtil.createTestTask2();
     taskEntity2.setUser(savedUser);
-    taskService.saveTask(taskEntity2);
+    taskService.createOrUpdateTask(taskEntity2);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks")
@@ -225,5 +225,101 @@ public class TaskControllerIntegrationTest {
         MockMvcResultMatchers.jsonPath("$.content[*].id").isNotEmpty()
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.content[*].description", hasItem(taskEntity.getDescription())));
+  }
+
+  @Test
+  public void testThatUpdateTaskSuccessfullyReturnsHttp200OKWhenTaskExists()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTask = taskService.createOrUpdateTask(taskEntity);
+
+    TaskEntity updatedTask = TestDataUtil.createTestTask();
+    updatedTask.setUser(savedUserEntity);
+    updatedTask.setDescription("Updated Description");
+
+    String userJson = objectMapper.writeValueAsString(updatedTask);
+    mockMvc.perform(
+        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(userJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+  @Test
+  public void testThatUpdateTaskSuccessfullyReturnsHttp404NotFoundWhenTaskDoesNotExist()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    taskEntity.setId(1L);
+
+    TaskEntity updatedTask = TestDataUtil.createTestTask();
+    updatedTask.setUser(savedUserEntity);
+    updatedTask.setDescription("Updated Description");
+
+
+    String userJson = objectMapper.writeValueAsString(updatedTask);
+    mockMvc.perform(
+        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+taskEntity.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(userJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatUpdateTaskSuccessfullyReturnsHttp404NotFoundWhenAuthorDoesNotExist()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTask = taskService.createOrUpdateTask(taskEntity);
+
+    TaskEntity updatedTask = TestDataUtil.createTestTask();
+    updatedTask.setUser(savedUserEntity);
+    updatedTask.setDescription("Updated Description");
+
+    String userJson = objectMapper.writeValueAsString(updatedTask);
+    mockMvc.perform(
+        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+1+"/tasks/"+savedTask.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(userJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatUpdateUserSuccessfullyUpdatesUser()
+  throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTask = taskService.createOrUpdateTask(taskEntity);
+
+    TaskEntity updatedTask = TestDataUtil.createTestTask();
+    updatedTask.setUser(savedUserEntity);
+    updatedTask.setDescription("Updated Description");
+
+    String userJson = objectMapper.writeValueAsString(updatedTask);
+    mockMvc.perform(
+        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(userJson)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.id").isNumber()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.description").value(updatedTask.getDescription())
+    );
   }
 }
