@@ -183,4 +183,47 @@ public class TaskControllerIntegrationTest {
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$[*].description", hasItem(taskEntity.getDescription())));
   }
+
+  @Test
+  public void testThatGetMultipleTasksSuccessfullyReturnsHttp200OK()
+      throws Exception {
+    UserEntity userEntity = TestDataUtil.createTestUser();
+    UserEntity savedUser = userService.createUpdateUser(userEntity);
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUser);
+    taskService.saveTask(taskEntity);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks")
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+  @Test
+  public void testThatGetMultipleTasksReturnsListOfTasks()
+      throws Exception {
+    UserEntity userEntity = TestDataUtil.createTestUser();
+    UserEntity savedUser = userService.createUpdateUser(userEntity);
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUser);
+    taskService.saveTask(taskEntity);
+
+    TaskEntity taskEntity2 = TestDataUtil.createTestTask2();
+    taskEntity2.setUser(savedUser);
+    taskService.saveTask(taskEntity2);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks")
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.content").isArray()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.content", hasSize(2))
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.content[*].id").isNotEmpty()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.content[*].description", hasItem(taskEntity.getDescription())));
+  }
 }

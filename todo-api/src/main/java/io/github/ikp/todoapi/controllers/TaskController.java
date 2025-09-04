@@ -2,6 +2,7 @@ package io.github.ikp.todoapi.controllers;
 
 import io.github.ikp.todoapi.domain.dto.TaskDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
+import io.github.ikp.todoapi.domain.entities.UserEntity;
 import io.github.ikp.todoapi.mappers.Mapper;
 import io.github.ikp.todoapi.repositories.UserRepository;
 import io.github.ikp.todoapi.services.TaskService;
@@ -9,6 +10,8 @@ import io.github.ikp.todoapi.services.UserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,5 +56,10 @@ public class TaskController {
     return tasks.stream()
         .map(taskMapper::mapTo)
         .collect(Collectors.toList());
+  }
+  @GetMapping(path = "/users/{userId}/tasks")
+  public Page<TaskDto> getMultipleTasks(@PathVariable Long userId, Pageable pageable){
+    Page<TaskEntity> tasks = taskService.getMultipleTasks(userId,pageable);
+    return tasks.map(taskMapper::mapTo);
   }
 }
