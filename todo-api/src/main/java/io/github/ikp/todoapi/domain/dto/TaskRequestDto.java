@@ -1,6 +1,6 @@
 package io.github.ikp.todoapi.domain.dto;
 
-import java.time.Instant;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,13 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TaskRequestDto {
 
+  @Size(max = 500)
   private String description;
 
-  private UserResponseDto user;
-
   private boolean completed = false;
-
-  private Instant createdAt;
-
-  private Instant updatedAt;
 }
