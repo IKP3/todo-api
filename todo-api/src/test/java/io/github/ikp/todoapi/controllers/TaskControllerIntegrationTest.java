@@ -9,6 +9,7 @@ import io.github.ikp.todoapi.domain.dto.TaskDto;
 import io.github.ikp.todoapi.domain.dto.UserDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
+import io.github.ikp.todoapi.repositories.UserRepository;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ public class TaskControllerIntegrationTest {
   private final MockMvc mockMvc;
   private final ObjectMapper objectMapper;
   private final TaskService taskService;
-  private UserService userService;
+  private final UserService userService;
 
   @Autowired
   public TaskControllerIntegrationTest(final MockMvc mockMvc, final TaskService taskService, final UserService userService) {
@@ -432,4 +433,52 @@ public class TaskControllerIntegrationTest {
     );
   }
 
+
+  @Test
+  public void testThatDeleteTaskSuccessfullyReturnsHttp204NoContentWhenTaskExists()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
+    mockMvc.perform(
+        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNoContent()
+    );
+  }
+  @Test
+  public void testThatDeleteTaskSuccessfullyReturnsHttp404NotFoundWhenTaskDoesNotExist()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId()+1)
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatDeleteTaskSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId()+1+"/tasks/"+savedTaskEntity.getId())
+            .accept(MediaType.APPLICATION_JSON)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
 }

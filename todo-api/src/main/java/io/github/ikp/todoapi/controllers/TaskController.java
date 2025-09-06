@@ -84,12 +84,12 @@ public class TaskController {
           return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
-  /*@DeleteMapping(path = "/users/{userId}/tasks/{taskId}")
+  @DeleteMapping(path = "/users/{userId}/tasks/{taskId}")
   public ResponseEntity<TaskDto> deleteTask(@PathVariable Long userId, @PathVariable Long taskId){
-    if (!taskService.existsByIdAndUserId(taskId, userId)) {
+    if (!taskService.existsByIdAndUserId(userId,taskId)) {
       return ResponseEntity.notFound().build();
     }
     taskService.deleteTask(userId, taskId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }*/
+  }
 }

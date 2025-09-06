@@ -20,4 +20,6 @@ public interface TaskService {
   boolean existsByIdAndUserId(Long userId,Long taskId);
 
   TaskEntity partialUpdate(Long userId,Long taskId,TaskEntity taskEntity);
+
+  void deleteTask(Long userId, Long taskId);
 }

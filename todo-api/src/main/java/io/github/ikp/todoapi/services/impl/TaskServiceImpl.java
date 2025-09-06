@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -48,6 +49,11 @@ public class TaskServiceImpl implements TaskService {
       Optional.of(taskEntity.isCompleted()).ifPresent(existingTask::setCompleted);
       return taskRepository.save(existingTask);
     }).orElseThrow(()->new RuntimeException("Task does not exist" + taskEntity.getId()));
+  }
+
+  @Override
+  public void deleteTask(Long userId, Long taskId) {
+    taskRepository.deleteByUser_IdAndId(userId,taskId);
   }
 
 }

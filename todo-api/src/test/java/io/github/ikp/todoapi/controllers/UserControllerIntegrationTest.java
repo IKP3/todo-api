@@ -289,4 +289,5 @@ public class UserControllerIntegrationTest {
         MockMvcResultMatchers.status().isNotFound()
     );
   }
+
 }
