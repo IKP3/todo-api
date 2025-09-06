@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping(path = "/api/v1/users")
 @RestController
 public class TaskController {
   private final TaskService taskService;
@@ -37,7 +39,7 @@ public class TaskController {
     this.userService = userService;
     this.taskRequestMapper = taskRequestMapper;
   }
-  @PostMapping(path = "/users/{userId}/tasks")
+  @PostMapping(path = "/{userId}/tasks")
   public ResponseEntity<TaskResponseDto> createTask( @PathVariable Long userId, @Valid @RequestBody TaskRequestDto taskRequestDto){
     return userService.getUser(userId)
         .map(user -> {
@@ -48,7 +50,7 @@ public class TaskController {
         })
         .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
-  @GetMapping(path = "/users/{userId}/tasks/{taskId}")
+  @GetMapping(path = "/{userId}/tasks/{taskId}")
   public ResponseEntity<TaskResponseDto> getTask(@PathVariable Long userId,@PathVariable Long taskId){
     Optional<TaskEntity> taskEntity = taskService.getTask(userId, taskId);
     return taskEntity.map(task->{
@@ -56,19 +58,19 @@ public class TaskController {
       return new ResponseEntity<>(taskResponseDto, HttpStatus.OK);
     }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
-  @GetMapping(path = "/users/{userId}/tasks/all")
+  @GetMapping(path = "/{userId}/tasks/all")
   public List<TaskResponseDto> getAllTasks(@PathVariable Long userId){
     List<TaskEntity> tasks = taskService.getMultipleTasks(userId);
     return tasks.stream()
         .map(taskResponseMapper::mapTo)
         .collect(Collectors.toList());
   }
-  @GetMapping(path = "/users/{userId}/tasks")
+  @GetMapping(path = "/{userId}/tasks")
   public Page<TaskResponseDto> getMultipleTasks(@PathVariable Long userId, Pageable pageable){
     Page<TaskEntity> tasks = taskService.getMultipleTasks(userId,pageable);
     return tasks.map(taskResponseMapper::mapTo);
   }
-  @PutMapping(path = "/users/{userId}/tasks/{taskId}")
+  @PutMapping(path = "/{userId}/tasks/{taskId}")
   public ResponseEntity<TaskResponseDto> updateTask( @PathVariable Long userId, @PathVariable Long taskId, @Valid @RequestBody TaskRequestDto taskRequestDto){
     return taskService.getTask(userId,taskId)
         .map(task -> {
@@ -79,7 +81,7 @@ public class TaskController {
           return new ResponseEntity<>(taskResponseMapper.mapTo(saved), HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
-  @PatchMapping(path = "/users/{userId}/tasks/{taskId}")
+  @PatchMapping(path = "/{userId}/tasks/{taskId}")
   public ResponseEntity<TaskResponseDto> partialUpdateTask(@PathVariable Long userId, @PathVariable Long taskId, @Valid @RequestBody TaskRequestDto taskRequestDto){
     return taskService.getTask(userId,taskId)
         .map(task -> {
@@ -89,7 +91,7 @@ public class TaskController {
           return new ResponseEntity<>(taskResponseMapper.mapTo(saved), HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
-  @DeleteMapping(path = "/users/{userId}/tasks/{taskId}")
+  @DeleteMapping(path = "/{userId}/tasks/{taskId}")
   public ResponseEntity<TaskResponseDto> deleteTask(@PathVariable Long userId, @PathVariable Long taskId){
     if (!taskService.existsByIdAndUserId(userId,taskId)) {
       return ResponseEntity.notFound().build();

@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping(path = "/api/v1/users")
 @RestController
 public class UserController {
   private final UserService userService;
@@ -33,13 +35,13 @@ public class UserController {
     this.userResponseMapper = userResponseMapper;
     this.userRequestMapper = userRequestMapper;
   }
-  @PostMapping(path = "/users")
+  @PostMapping
   public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
     UserEntity userEntity = userRequestMapper.mapFrom(userRequestDto);
     UserEntity savedUserEntity = userService.createOrUpdateUser(userEntity);
     return new ResponseEntity<>(userResponseMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
   }
-  @GetMapping(path = "/users/{userId}")
+  @GetMapping(path = "/{userId}")
   public ResponseEntity<UserResponseDto> getUser(@PathVariable Long userId) {
     Optional<UserEntity> foundUser = userService.getUser(userId);
 
@@ -48,19 +50,19 @@ public class UserController {
       return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
-  @GetMapping(path = "/users")
+  @GetMapping
   public Page<UserResponseDto> getMultipleUsers(Pageable pageable) {
     Page<UserEntity> users = userService.getMultipleUsers(pageable);
     return users.map(userResponseMapper::mapTo);
   }
-  @GetMapping(path = "/users/all")
+  @GetMapping(path = "/all")
   public List<UserResponseDto> getAllUsers() {
     List<UserEntity> users = userService.getMultipleUsers();
     return users.stream()
         .map(userResponseMapper::mapTo)
         .collect(Collectors.toList());
   }
-  @PutMapping(path = "/users/{userId}")
+  @PutMapping(path = "/{userId}")
   public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @Valid @RequestBody UserRequestDto userRequestDto) {
 
     if (!userService.existsById(userId)) {
@@ -72,7 +74,7 @@ public class UserController {
 
     return ResponseEntity.ok(userResponseMapper.mapTo(updated));
   }
-  @PatchMapping(path = "/users/{userId}")
+  @PatchMapping(path = "/{userId}")
   public ResponseEntity<UserResponseDto> partialUpdateUser(@PathVariable Long userId, @Valid @RequestBody UserRequestDto userRequestDto) {
 
     if (!userService.existsById(userId)) {
@@ -85,7 +87,7 @@ public class UserController {
 
     return ResponseEntity.ok(userResponseMapper.mapTo(updated));
   }
-  @DeleteMapping(path = "/users/{userId}")
+  @DeleteMapping(path = "/{userId}")
   public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
     if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();

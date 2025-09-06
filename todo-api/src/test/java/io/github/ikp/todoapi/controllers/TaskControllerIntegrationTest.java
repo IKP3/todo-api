@@ -48,7 +48,7 @@ public class TaskControllerIntegrationTest {
     TaskRequestDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users/"+savedUser.getId()+"/tasks")
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/"+savedUser.getId()+"/tasks")
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
         .content(taskJson)
@@ -65,7 +65,7 @@ public class TaskControllerIntegrationTest {
     TaskRequestDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users/"+savedUser.getId() + 1+"/tasks")
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/"+savedUser.getId() + 1+"/tasks")
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
         .content(taskJson)
@@ -82,7 +82,7 @@ public class TaskControllerIntegrationTest {
     TaskRequestDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/users/"+savedUser.getId()+"/tasks")
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/"+savedUser.getId()+"/tasks")
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
         .content(taskJson)
@@ -103,7 +103,7 @@ public class TaskControllerIntegrationTest {
     taskEntity.setUser(savedUser);
     taskService.createOrUpdateTask(taskEntity);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
         .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isOk()
@@ -120,7 +120,7 @@ public class TaskControllerIntegrationTest {
 
     TaskEntity savedTask = taskService.createOrUpdateTask(taskEntity);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+savedTask.getId()+1)
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId()+"/tasks/"+savedTask.getId()+1)
         .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNotFound()
@@ -136,7 +136,7 @@ public class TaskControllerIntegrationTest {
     taskEntity.setUser(savedUser);
     taskService.createOrUpdateTask(taskEntity);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId()+"/tasks/"+taskEntity.getId())
         .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.id").isNumber()
@@ -155,7 +155,7 @@ public class TaskControllerIntegrationTest {
     taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/all")
+        MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId()+"/tasks/all")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isOk()
@@ -176,7 +176,7 @@ public class TaskControllerIntegrationTest {
     taskService.createOrUpdateTask(taskEntity2);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/all")
+        MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId()+"/tasks/all")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$").isArray()
@@ -198,7 +198,7 @@ public class TaskControllerIntegrationTest {
     taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks")
+        MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId()+"/tasks")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isOk()
@@ -219,7 +219,7 @@ public class TaskControllerIntegrationTest {
     taskService.createOrUpdateTask(taskEntity2);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks")
+        MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId()+"/tasks")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.content").isArray()
@@ -246,7 +246,7 @@ public class TaskControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedTask);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId())
+        MockMvcRequestBuilders.put("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -270,7 +270,7 @@ public class TaskControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedTask);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId()+1)
+        MockMvcRequestBuilders.put("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId()+1)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -293,7 +293,7 @@ public class TaskControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedTask);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+1+"/tasks/"+savedTask.getId())
+        MockMvcRequestBuilders.put("/api/v1/users/"+savedUserEntity.getId()+1+"/tasks/"+savedTask.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -316,7 +316,7 @@ public class TaskControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedTask);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId())
+        MockMvcRequestBuilders.put("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -345,7 +345,7 @@ public class TaskControllerIntegrationTest {
     String taskJson = objectMapper.writeValueAsString(TaskRequestDto);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
+        MockMvcRequestBuilders.patch("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(taskJson)
@@ -369,7 +369,7 @@ public class TaskControllerIntegrationTest {
     String taskJson = objectMapper.writeValueAsString(TaskRequestDto);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+taskEntity.getId() + 1)
+        MockMvcRequestBuilders.patch("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+taskEntity.getId() + 1)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(taskJson)
@@ -393,7 +393,7 @@ public class TaskControllerIntegrationTest {
     String taskJson = objectMapper.writeValueAsString(TaskRequestDto);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+1+"/tasks/"+taskEntity.getId())
+        MockMvcRequestBuilders.patch("/api/v1/users/"+savedUserEntity.getId()+1+"/tasks/"+taskEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(taskJson)
@@ -418,7 +418,7 @@ public class TaskControllerIntegrationTest {
     String taskJson = objectMapper.writeValueAsString(taskUpdate);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
+        MockMvcRequestBuilders.patch("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(taskJson)
@@ -441,7 +441,7 @@ public class TaskControllerIntegrationTest {
     taskEntity.setUser(savedUserEntity);
     TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
     mockMvc.perform(
-        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
+        MockMvcRequestBuilders.delete("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNoContent()
@@ -457,7 +457,7 @@ public class TaskControllerIntegrationTest {
     TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId()+1)
+        MockMvcRequestBuilders.delete("/api/v1/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId()+1)
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNotFound()
@@ -473,7 +473,7 @@ public class TaskControllerIntegrationTest {
     TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId()+1+"/tasks/"+savedTaskEntity.getId())
+        MockMvcRequestBuilders.delete("/api/v1/users/"+savedUserEntity.getId()+1+"/tasks/"+savedTaskEntity.getId())
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNotFound()

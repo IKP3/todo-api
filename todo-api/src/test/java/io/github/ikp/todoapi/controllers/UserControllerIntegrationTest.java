@@ -41,7 +41,7 @@ public class UserControllerIntegrationTest {
     String userJson = objectMapper.writeValueAsString(testUser);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.post("/users")
+        MockMvcRequestBuilders.post("/api/v1/users")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -56,7 +56,7 @@ public class UserControllerIntegrationTest {
     String userJson = objectMapper.writeValueAsString(testUser);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.post("/users")
+        MockMvcRequestBuilders.post("/api/v1/users")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -73,7 +73,7 @@ public class UserControllerIntegrationTest {
     UserEntity savedUser = userService.createOrUpdateUser(testUser);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/"+savedUser.getId())
+        MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId())
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isOk()
@@ -83,7 +83,7 @@ public class UserControllerIntegrationTest {
   public void testThatGetUserSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
       throws Exception {
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/1")
+        MockMvcRequestBuilders.get("/api/v1/users/1")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNotFound()
@@ -96,7 +96,7 @@ public class UserControllerIntegrationTest {
     UserEntity savedUser = userService.createOrUpdateUser(testUser);
 
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/"+savedUser.getId())
+        MockMvcRequestBuilders.get("/api/v1/users/"+savedUser.getId())
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.id").value(savedUser.getId())
@@ -108,7 +108,7 @@ public class UserControllerIntegrationTest {
   public void testThatGetMultipleUsersSuccessfullyReturnsHttp200OK()
       throws Exception {
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users")
+        MockMvcRequestBuilders.get("/api/v1/users")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isOk()
@@ -120,7 +120,7 @@ public class UserControllerIntegrationTest {
     UserEntity userEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
     UserEntity userEntity2 = userService.createOrUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users")
+        MockMvcRequestBuilders.get("/api/v1/users")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.content").isArray()
@@ -135,7 +135,7 @@ public class UserControllerIntegrationTest {
   public void testThatGetAllUsersSuccessfullyReturnsHttp200OK()
       throws Exception {
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/all")
+        MockMvcRequestBuilders.get("/api/v1/users/all")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isOk()
@@ -148,7 +148,7 @@ public class UserControllerIntegrationTest {
     UserEntity userEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
     UserEntity userEntity2 = userService.createOrUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/all")
+        MockMvcRequestBuilders.get("/api/v1/users/all")
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$").isArray()
@@ -168,7 +168,7 @@ public class UserControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedUserRequestDto);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId())
+        MockMvcRequestBuilders.put("/api/v1/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -185,7 +185,7 @@ public class UserControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedUserRequestDto);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+1)
+        MockMvcRequestBuilders.put("/api/v1/users/"+savedUserEntity.getId()+1)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -202,7 +202,7 @@ public class UserControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedUser);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId())
+        MockMvcRequestBuilders.put("/api/v1/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -220,7 +220,7 @@ public class UserControllerIntegrationTest {
     updatedUser.setName(savedUserEntity.getName());
     String userJson = objectMapper.writeValueAsString(updatedUser);
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId())
+        MockMvcRequestBuilders.patch("/api/v1/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -235,7 +235,7 @@ public class UserControllerIntegrationTest {
     UserRequestDto UserRequestDto = TestDataUtil.createTestUserDto();
     String userJson = objectMapper.writeValueAsString(UserRequestDto);
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+1)
+        MockMvcRequestBuilders.patch("/api/v1/users/"+savedUserEntity.getId()+1)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -251,7 +251,7 @@ public class UserControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedUserRequestDto);
     mockMvc.perform(
-        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId())
+        MockMvcRequestBuilders.patch("/api/v1/users/"+savedUserEntity.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
@@ -266,7 +266,7 @@ public class UserControllerIntegrationTest {
       throws Exception {
     UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
-        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId())
+        MockMvcRequestBuilders.delete("/api/v1/users/"+savedUserEntity.getId())
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNoContent()
@@ -277,7 +277,7 @@ public class UserControllerIntegrationTest {
       throws Exception {
     UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
-        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId()+1)
+        MockMvcRequestBuilders.delete("/api/v1/users/"+savedUserEntity.getId()+1)
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNotFound()
@@ -288,11 +288,11 @@ public class UserControllerIntegrationTest {
       throws Exception {
     UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
     mockMvc.perform(
-        MockMvcRequestBuilders.delete("/users/"+savedUserEntity.getId())
+        MockMvcRequestBuilders.delete("/api/v1/users/"+savedUserEntity.getId())
             .accept(MediaType.APPLICATION_JSON)
     );
     mockMvc.perform(
-        MockMvcRequestBuilders.get("/users/"+savedUserEntity.getId())
+        MockMvcRequestBuilders.get("/api/v1/users/"+savedUserEntity.getId())
             .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNotFound()
