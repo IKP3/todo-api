@@ -263,7 +263,7 @@ public class TaskControllerIntegrationTest {
 
     TaskEntity taskEntity = TestDataUtil.createTestTask();
     taskEntity.setUser(savedUserEntity);
-    taskEntity.setId(1L);
+    TaskEntity savedTask = taskService.createOrUpdateTask(taskEntity);
 
     TaskEntity updatedTask = TestDataUtil.createTestTask();
     updatedTask.setUser(savedUserEntity);
@@ -272,7 +272,7 @@ public class TaskControllerIntegrationTest {
 
     String userJson = objectMapper.writeValueAsString(updatedTask);
     mockMvc.perform(
-        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+taskEntity.getId())
+        MockMvcRequestBuilders.put("/users/"+savedUserEntity.getId()+"/tasks/"+savedTask.getId()+1)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(userJson)
