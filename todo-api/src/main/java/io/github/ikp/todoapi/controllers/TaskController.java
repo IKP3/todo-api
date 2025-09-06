@@ -1,12 +1,13 @@
 package io.github.ikp.todoapi.controllers;
 
-import io.github.ikp.todoapi.domain.dto.TaskRequestDto;
-import io.github.ikp.todoapi.domain.dto.TaskResponseDto;
+import io.github.ikp.todoapi.domain.dto.request.TaskRequestDto;
+import io.github.ikp.todoapi.domain.dto.response.TaskResponseDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.mappers.RequestMapper;
 import io.github.ikp.todoapi.mappers.ResponseMapper;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class TaskController {
     this.taskRequestMapper = taskRequestMapper;
   }
   @PostMapping(path = "/users/{userId}/tasks")
-  public ResponseEntity<TaskResponseDto> createTask( @PathVariable Long userId,@RequestBody TaskRequestDto taskRequestDto){
+  public ResponseEntity<TaskResponseDto> createTask( @PathVariable Long userId, @Valid @RequestBody TaskRequestDto taskRequestDto){
     return userService.getUser(userId)
         .map(user -> {
           TaskEntity task = taskRequestMapper.mapFrom(taskRequestDto);
@@ -68,7 +69,7 @@ public class TaskController {
     return tasks.map(taskResponseMapper::mapTo);
   }
   @PutMapping(path = "/users/{userId}/tasks/{taskId}")
-  public ResponseEntity<TaskResponseDto> updateTask( @PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskRequestDto taskRequestDto){
+  public ResponseEntity<TaskResponseDto> updateTask( @PathVariable Long userId, @PathVariable Long taskId, @Valid @RequestBody TaskRequestDto taskRequestDto){
     return taskService.getTask(userId,taskId)
         .map(task -> {
           TaskEntity taskEntity = taskRequestMapper.mapFrom(taskRequestDto);
@@ -79,7 +80,7 @@ public class TaskController {
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
   @PatchMapping(path = "/users/{userId}/tasks/{taskId}")
-  public ResponseEntity<TaskResponseDto> partialUpdateTask(@PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskRequestDto taskRequestDto){
+  public ResponseEntity<TaskResponseDto> partialUpdateTask(@PathVariable Long userId, @PathVariable Long taskId, @Valid @RequestBody TaskRequestDto taskRequestDto){
     return taskService.getTask(userId,taskId)
         .map(task -> {
           TaskEntity taskEntity = taskRequestMapper.mapFrom(taskRequestDto);

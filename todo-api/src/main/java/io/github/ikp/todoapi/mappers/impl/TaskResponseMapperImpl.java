@@ -1,6 +1,6 @@
 package io.github.ikp.todoapi.mappers.impl;
 
-import io.github.ikp.todoapi.domain.dto.TaskResponseDto;
+import io.github.ikp.todoapi.domain.dto.response.TaskResponseDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.mappers.ResponseMapper;
 import org.modelmapper.ModelMapper;

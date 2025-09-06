@@ -1,6 +1,5 @@
-package io.github.ikp.todoapi.domain.dto;
+package io.github.ikp.todoapi.domain.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRequestDto {
+public class TaskRequestDto {
 
-  @NotBlank
-  @Size(max = 100)
-  private String name;
+  @Size(max = 500)
+  private String description;
+
+  private Boolean completed;
 }

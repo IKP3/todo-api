@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.ikp.todoapi.TestDataUtil;
-import io.github.ikp.todoapi.domain.dto.UserRequestDto;
+import io.github.ikp.todoapi.domain.dto.request.UserRequestDto;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
 import io.github.ikp.todoapi.services.UserService;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package io.github.ikp.todoapi.domain.dto;
+package io.github.ikp.todoapi.domain.dto.response;
 
 import java.time.Instant;
 import lombok.AllArgsConstructor;
@@ -18,6 +18,7 @@ public class TaskResponseDto {
 
   private UserResponseDto user;
 
+  @Builder.Default
   private boolean completed = false;
 
   private Instant createdAt;

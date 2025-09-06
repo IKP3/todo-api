@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -49,7 +50,7 @@ public class TaskEntity {
 
   @Column(nullable = false)
   @ToString.Include
-  private boolean completed = false;
+  private Boolean completed;
 
   @CreationTimestamp
   @Column(nullable = false, updatable = false)
@@ -59,4 +60,8 @@ public class TaskEntity {
   @Column(nullable = false)
   private Instant updatedAt;
 
+  @PrePersist
+  void prePersist() {
+    if (completed == null) completed = false;
+  }
 }

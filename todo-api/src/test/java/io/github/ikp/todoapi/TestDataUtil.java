@@ -1,9 +1,7 @@
 package io.github.ikp.todoapi;
 
-import io.github.ikp.todoapi.domain.dto.TaskRequestDto;
-import io.github.ikp.todoapi.domain.dto.TaskResponseDto;
-import io.github.ikp.todoapi.domain.dto.UserRequestDto;
-import io.github.ikp.todoapi.domain.dto.UserResponseDto;
+import io.github.ikp.todoapi.domain.dto.request.TaskRequestDto;
+import io.github.ikp.todoapi.domain.dto.request.UserRequestDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
 

@@ -1,4 +1,4 @@
-package io.github.ikp.todoapi.domain.dto;
+package io.github.ikp.todoapi.domain.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,11 +1,12 @@
 package io.github.ikp.todoapi.controllers;
 
-import io.github.ikp.todoapi.domain.dto.UserRequestDto;
-import io.github.ikp.todoapi.domain.dto.UserResponseDto;
+import io.github.ikp.todoapi.domain.dto.request.UserRequestDto;
+import io.github.ikp.todoapi.domain.dto.response.UserResponseDto;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
 import io.github.ikp.todoapi.mappers.RequestMapper;
 import io.github.ikp.todoapi.mappers.ResponseMapper;
 import io.github.ikp.todoapi.services.UserService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class UserController {
     this.userRequestMapper = userRequestMapper;
   }
   @PostMapping(path = "/users")
-  public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto userRequestDto) {
+  public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
     UserEntity userEntity = userRequestMapper.mapFrom(userRequestDto);
     UserEntity savedUserEntity = userService.createOrUpdateUser(userEntity);
     return new ResponseEntity<>(userResponseMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
@@ -60,7 +61,7 @@ public class UserController {
         .collect(Collectors.toList());
   }
   @PutMapping(path = "/users/{userId}")
-  public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto) {
+  public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @Valid @RequestBody UserRequestDto userRequestDto) {
 
     if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();
@@ -72,7 +73,7 @@ public class UserController {
     return ResponseEntity.ok(userResponseMapper.mapTo(updated));
   }
   @PatchMapping(path = "/users/{userId}")
-  public ResponseEntity<UserResponseDto> partialUpdateUser(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto) {
+  public ResponseEntity<UserResponseDto> partialUpdateUser(@PathVariable Long userId, @Valid @RequestBody UserRequestDto userRequestDto) {
 
     if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();
