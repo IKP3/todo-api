@@ -15,11 +15,13 @@ import org.springframework.stereotype.Repository;
 public interface TaskRepository extends CrudRepository<TaskEntity, Long>,
     PagingAndSortingRepository<TaskEntity, Long> {
   @Query("select t from TaskEntity t where t.id = :taskId and t.user.id = :userId")
-  Optional<TaskEntity> findByIdAndUserId(@Param("taskId") Long taskId, @Param("userId") Long userId);
+  Optional<TaskEntity> findByIdAndUserId( @Param("userId") Long userId,@Param("taskId") Long taskId);
 
   @Query("select t from TaskEntity t where t.user.id = :userId")
   List<TaskEntity> findByUserId(@Param("userId") Long userId);
 
   @Query("select t from TaskEntity t where t.user.id = :userId")
   Page<TaskEntity> findByUserId(@Param("userId") Long userId, Pageable pageable);
+
+  Boolean existsByUser_IdAndId(Long userId, Long taskId);
 }

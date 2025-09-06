@@ -22,7 +22,7 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public Optional<TaskEntity> getTask(Long userId, Long taskId) {
-    return taskRepository.findByIdAndUserId(taskId,userId);
+    return taskRepository.findByIdAndUserId(userId, taskId);
   }
 
   @Override
@@ -36,14 +36,14 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public boolean existsById(Long taskId) {
-    return taskRepository.existsById(taskId);
+  public boolean existsByIdAndUserId(Long userId,Long taskId) {
+    return taskRepository.existsByUser_IdAndId(userId, taskId);
   }
 
   @Override
-  public TaskEntity partialUpdate(Long taskId,TaskEntity taskEntity) {
+  public TaskEntity partialUpdate(Long userId,Long taskId,TaskEntity taskEntity) {
     taskEntity.setId(taskId);
-    return taskRepository.findById(taskId).map(existingTask ->{
+    return taskRepository.findByIdAndUserId(userId,taskId).map(existingTask ->{
       Optional.ofNullable(taskEntity.getDescription()).ifPresent(existingTask::setDescription);
       Optional.of(taskEntity.isCompleted()).ifPresent(existingTask::setCompleted);
       return taskRepository.save(existingTask);

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,8 +80,16 @@ public class TaskController {
         .map(task -> {
           TaskEntity taskEntity = taskMapper.mapFrom(taskDto);
           taskEntity.setUser(task.getUser());
-          TaskEntity saved = taskService.partialUpdate(taskId,taskEntity);
+          TaskEntity saved = taskService.partialUpdate(userId, taskId, taskEntity);
           return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
+  /*@DeleteMapping(path = "/users/{userId}/tasks/{taskId}")
+  public ResponseEntity<TaskDto> deleteTask(@PathVariable Long userId, @PathVariable Long taskId){
+    if (!taskService.existsByIdAndUserId(taskId, userId)) {
+      return ResponseEntity.notFound().build();
+    }
+    taskService.deleteTask(userId, taskId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }*/
 }
