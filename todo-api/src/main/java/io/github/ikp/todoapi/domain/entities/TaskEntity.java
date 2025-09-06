@@ -48,7 +48,6 @@ public class TaskEntity {
   @ToString.Include
   private String description;
 
-  @Column(nullable = false)
   @ToString.Include
   private Boolean completed;
 

@@ -427,7 +427,7 @@ public class TaskControllerIntegrationTest {
     ).andExpect(
         MockMvcResultMatchers.jsonPath("$.description").value(savedTaskEntity.getDescription())
     ).andExpect(
-        MockMvcResultMatchers.jsonPath("$.completed").value(taskUpdate.isCompleted())
+        MockMvcResultMatchers.jsonPath("$.completed").value(taskUpdate.getCompleted())
     );
   }
 

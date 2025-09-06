@@ -45,7 +45,7 @@ public class TaskServiceImpl implements TaskService {
     taskEntity.setId(taskId);
     return taskRepository.findByUser_IdAndId(userId,taskId).map(existingTask ->{
       Optional.ofNullable(taskEntity.getDescription()).ifPresent(existingTask::setDescription);
-      Optional.of(taskEntity.isCompleted()).ifPresent(existingTask::setCompleted);
+      Optional.of(taskEntity.getCompleted()).ifPresent(existingTask::setCompleted);
       return taskRepository.save(existingTask);
     }).orElseThrow(()->new RuntimeException("Task does not exist" + taskEntity.getId()));
   }
