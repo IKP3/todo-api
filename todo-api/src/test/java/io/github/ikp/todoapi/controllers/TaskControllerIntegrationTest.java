@@ -116,7 +116,12 @@ public class TaskControllerIntegrationTest {
     UserEntity userEntity = TestDataUtil.createTestUser();
     UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+1)
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUser);
+
+    TaskEntity savedTask = taskService.createOrUpdateTask(taskEntity);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/users/"+savedUser.getId()+"/tasks/"+savedTask.getId()+1)
         .accept(MediaType.APPLICATION_JSON)
     ).andExpect(
         MockMvcResultMatchers.status().isNotFound()
@@ -322,4 +327,109 @@ public class TaskControllerIntegrationTest {
         MockMvcResultMatchers.jsonPath("$.description").value(updatedTask.getDescription())
     );
   }
+
+
+
+  @Test
+  public void testThatPartialUpdateTaskSuccessfullyReturnsHttp200OKWhenTaskExists()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+
+    TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
+
+    TaskDto taskDto = TestDataUtil.createTestTaskDto();
+    taskDto.setDescription(null);
+    taskDto.setCompleted(true);
+    String taskJson = objectMapper.writeValueAsString(taskDto);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(taskJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isOk()
+    );
+  }
+  @Test
+  public void testThatPartialUpdateTaskSuccessfullyReturnsHttp404NotFoundWhenTaskDoesNotExist()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
+
+
+    TaskDto taskDto = TestDataUtil.createTestTaskDto();
+    taskDto.setDescription(null);
+    taskDto.setCompleted(true);
+    String taskJson = objectMapper.writeValueAsString(taskDto);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+taskEntity.getId() + 1)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(taskJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatPartialUpdateTaskSuccessfullyReturnsHttp404NotFoundWhenUserDoesNotExist()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+    TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
+
+
+    TaskDto taskDto = TestDataUtil.createTestTaskDto();
+    taskDto.setDescription(null);
+    taskDto.setCompleted(true);
+    String taskJson = objectMapper.writeValueAsString(taskDto);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+1+"/tasks/"+taskEntity.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(taskJson)
+    ).andExpect(
+        MockMvcResultMatchers.status().isNotFound()
+    );
+  }
+  @Test
+  public void testThatPartialUpdateTaskSuccessfullyUpdatesTask()
+      throws Exception {
+    UserEntity savedUserEntity = userService.createOrUpdateUser(TestDataUtil.createTestUser());
+
+    TaskEntity taskEntity = TestDataUtil.createTestTask();
+    taskEntity.setUser(savedUserEntity);
+
+    TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
+
+    TaskDto taskUpdate = TestDataUtil.createTestTaskDto();
+    taskUpdate.setDescription(null);
+    taskUpdate.setCompleted(true);
+
+    String taskJson = objectMapper.writeValueAsString(taskUpdate);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(taskJson)
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.id").isNumber()
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.description").value(savedTaskEntity.getDescription())
+    ).andExpect(
+        MockMvcResultMatchers.jsonPath("$.completed").value(taskUpdate.isCompleted())
+    );
+  }
+
 }

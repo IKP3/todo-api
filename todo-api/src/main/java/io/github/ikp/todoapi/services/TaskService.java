@@ -18,4 +18,6 @@ public interface TaskService {
   Page<TaskEntity> getMultipleTasks(Long userId, Pageable pageable);
 
   boolean existsById(Long taskId);
+
+  TaskEntity partialUpdate(Long taskId,TaskEntity taskEntity);
 }

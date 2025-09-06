@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -69,6 +70,16 @@ public class TaskController {
           taskEntity.setId(taskId);
           taskEntity.setUser(task.getUser());
           TaskEntity saved = taskService.createOrUpdateTask(taskEntity);
+          return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  }
+  @PatchMapping(path = "/users/{userId}/tasks/{taskId}")
+  public ResponseEntity<TaskDto> partialUpdateTask(@PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskDto taskDto){
+    return taskService.getTask(userId,taskId)
+        .map(task -> {
+          TaskEntity taskEntity = taskMapper.mapFrom(taskDto);
+          taskEntity.setUser(task.getUser());
+          TaskEntity saved = taskService.partialUpdate(taskId,taskEntity);
           return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }

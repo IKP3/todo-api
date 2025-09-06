@@ -39,4 +39,15 @@ public class TaskServiceImpl implements TaskService {
   public boolean existsById(Long taskId) {
     return taskRepository.existsById(taskId);
   }
+
+  @Override
+  public TaskEntity partialUpdate(Long taskId,TaskEntity taskEntity) {
+    taskEntity.setId(taskId);
+    return taskRepository.findById(taskId).map(existingTask ->{
+      Optional.ofNullable(taskEntity.getDescription()).ifPresent(existingTask::setDescription);
+      Optional.of(taskEntity.isCompleted()).ifPresent(existingTask::setCompleted);
+      return taskRepository.save(existingTask);
+    }).orElseThrow(()->new RuntimeException("Task does not exist" + taskEntity.getId()));
+  }
+
 }

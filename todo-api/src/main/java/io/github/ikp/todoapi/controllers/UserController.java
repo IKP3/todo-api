@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserContoller {
+public class UserController {
   private final UserService userService;
   private final Mapper<UserEntity, UserDto> userMapper;
-  public UserContoller(final UserService userService, final Mapper<UserEntity, UserDto> userMapper) {
+  public UserController(final UserService userService, final Mapper<UserEntity, UserDto> userMapper) {
     this.userService = userService;
     this.userMapper = userMapper;
   }
