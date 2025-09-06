@@ -1,6 +1,5 @@
 package io.github.ikp.todoapi.mappers;
 
-public interface Mapper<A,B> {
-  B mapTo(A a);
+public interface RequestMapper<A,B> {
   A mapFrom(B b);
 }

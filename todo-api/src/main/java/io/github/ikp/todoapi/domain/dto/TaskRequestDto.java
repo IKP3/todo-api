@@ -10,13 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskDto {
-
-  private  Long id;
+public class TaskRequestDto {
 
   private String description;
 
-  private UserDto user;
+  private UserResponseDto user;
 
   private boolean completed = false;
 

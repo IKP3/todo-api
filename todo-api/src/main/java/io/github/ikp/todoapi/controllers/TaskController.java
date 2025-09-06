@@ -1,8 +1,10 @@
 package io.github.ikp.todoapi.controllers;
 
-import io.github.ikp.todoapi.domain.dto.TaskDto;
+import io.github.ikp.todoapi.domain.dto.TaskRequestDto;
+import io.github.ikp.todoapi.domain.dto.TaskResponseDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
-import io.github.ikp.todoapi.mappers.Mapper;
+import io.github.ikp.todoapi.mappers.RequestMapper;
+import io.github.ikp.todoapi.mappers.ResponseMapper;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
 import java.util.List;
@@ -25,67 +27,69 @@ import org.springframework.web.bind.annotation.RestController;
 public class TaskController {
   private final TaskService taskService;
   private final UserService userService;
-  private final Mapper<TaskEntity, TaskDto> taskMapper;
+  private final ResponseMapper<TaskEntity, TaskResponseDto> taskResponseMapper;
+  private final RequestMapper<TaskEntity, TaskRequestDto> taskRequestMapper;
 
-  public TaskController(final TaskService taskService,final UserService userService,final Mapper<TaskEntity, TaskDto> taskMapper) {
+  public TaskController(final TaskService taskService,final UserService userService,final ResponseMapper<TaskEntity, TaskResponseDto> taskResponseMapper,final RequestMapper<TaskEntity, TaskRequestDto> taskRequestMapper) {
     this.taskService = taskService;
-    this.taskMapper = taskMapper;
+    this.taskResponseMapper = taskResponseMapper;
     this.userService = userService;
+    this.taskRequestMapper = taskRequestMapper;
   }
   @PostMapping(path = "/users/{userId}/tasks")
-  public ResponseEntity<TaskDto> createTask( @PathVariable Long userId,@RequestBody TaskDto taskDto){
+  public ResponseEntity<TaskResponseDto> createTask( @PathVariable Long userId,@RequestBody TaskRequestDto taskRequestDto){
     return userService.getUser(userId)
         .map(user -> {
-          TaskEntity task = taskMapper.mapFrom(taskDto);
+          TaskEntity task = taskRequestMapper.mapFrom(taskRequestDto);
           task.setUser(user);
           TaskEntity saved = taskService.createOrUpdateTask(task);
-          return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.CREATED);
+          return new ResponseEntity<>(taskResponseMapper.mapTo(saved), HttpStatus.CREATED);
         })
         .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
   @GetMapping(path = "/users/{userId}/tasks/{taskId}")
-  public ResponseEntity<TaskDto> getTask(@PathVariable Long userId,@PathVariable Long taskId){
+  public ResponseEntity<TaskResponseDto> getTask(@PathVariable Long userId,@PathVariable Long taskId){
     Optional<TaskEntity> taskEntity = taskService.getTask(userId, taskId);
     return taskEntity.map(task->{
-      TaskDto taskDto = taskMapper.mapTo(task);
-      return new ResponseEntity<>(taskDto, HttpStatus.OK);
+      TaskResponseDto taskResponseDto = taskResponseMapper.mapTo(task);
+      return new ResponseEntity<>(taskResponseDto, HttpStatus.OK);
     }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
   @GetMapping(path = "/users/{userId}/tasks/all")
-  public List<TaskDto> getAllTasks(@PathVariable Long userId){
+  public List<TaskResponseDto> getAllTasks(@PathVariable Long userId){
     List<TaskEntity> tasks = taskService.getMultipleTasks(userId);
     return tasks.stream()
-        .map(taskMapper::mapTo)
+        .map(taskResponseMapper::mapTo)
         .collect(Collectors.toList());
   }
   @GetMapping(path = "/users/{userId}/tasks")
-  public Page<TaskDto> getMultipleTasks(@PathVariable Long userId, Pageable pageable){
+  public Page<TaskResponseDto> getMultipleTasks(@PathVariable Long userId, Pageable pageable){
     Page<TaskEntity> tasks = taskService.getMultipleTasks(userId,pageable);
-    return tasks.map(taskMapper::mapTo);
+    return tasks.map(taskResponseMapper::mapTo);
   }
   @PutMapping(path = "/users/{userId}/tasks/{taskId}")
-  public ResponseEntity<TaskDto> updateTask( @PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskDto taskDto){
+  public ResponseEntity<TaskResponseDto> updateTask( @PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskRequestDto taskRequestDto){
     return taskService.getTask(userId,taskId)
         .map(task -> {
-          TaskEntity taskEntity = taskMapper.mapFrom(taskDto);
+          TaskEntity taskEntity = taskRequestMapper.mapFrom(taskRequestDto);
           taskEntity.setId(taskId);
           taskEntity.setUser(task.getUser());
           TaskEntity saved = taskService.createOrUpdateTask(taskEntity);
-          return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.OK);
+          return new ResponseEntity<>(taskResponseMapper.mapTo(saved), HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
   @PatchMapping(path = "/users/{userId}/tasks/{taskId}")
-  public ResponseEntity<TaskDto> partialUpdateTask(@PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskDto taskDto){
+  public ResponseEntity<TaskResponseDto> partialUpdateTask(@PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskRequestDto taskRequestDto){
     return taskService.getTask(userId,taskId)
         .map(task -> {
-          TaskEntity taskEntity = taskMapper.mapFrom(taskDto);
+          TaskEntity taskEntity = taskRequestMapper.mapFrom(taskRequestDto);
           taskEntity.setUser(task.getUser());
           TaskEntity saved = taskService.partialUpdate(userId, taskId, taskEntity);
-          return new ResponseEntity<>(taskMapper.mapTo(saved), HttpStatus.OK);
+          return new ResponseEntity<>(taskResponseMapper.mapTo(saved), HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
   @DeleteMapping(path = "/users/{userId}/tasks/{taskId}")
-  public ResponseEntity<TaskDto> deleteTask(@PathVariable Long userId, @PathVariable Long taskId){
+  public ResponseEntity<TaskResponseDto> deleteTask(@PathVariable Long userId, @PathVariable Long taskId){
     if (!taskService.existsByIdAndUserId(userId,taskId)) {
       return ResponseEntity.notFound().build();
     }

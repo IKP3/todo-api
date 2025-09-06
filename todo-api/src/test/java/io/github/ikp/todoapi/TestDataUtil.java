@@ -1,7 +1,9 @@
 package io.github.ikp.todoapi;
 
-import io.github.ikp.todoapi.domain.dto.TaskDto;
-import io.github.ikp.todoapi.domain.dto.UserDto;
+import io.github.ikp.todoapi.domain.dto.TaskRequestDto;
+import io.github.ikp.todoapi.domain.dto.TaskResponseDto;
+import io.github.ikp.todoapi.domain.dto.UserRequestDto;
+import io.github.ikp.todoapi.domain.dto.UserResponseDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
 
@@ -11,8 +13,8 @@ public class TestDataUtil {
         .name("Igor")
         .build();
   }
-  public static UserDto createTestUserDto() {
-    return UserDto.builder()
+  public static UserRequestDto createTestUserDto() {
+    return UserRequestDto.builder()
         .name("Igor")
         .build();
   }
@@ -26,8 +28,8 @@ public class TestDataUtil {
         .description("test2")
         .build();
   }
-  public static TaskDto createTestTaskDto() {
-    return TaskDto.builder()
+  public static TaskRequestDto createTestTaskDto() {
+    return TaskRequestDto.builder()
         .description("test")
         .build();
   }

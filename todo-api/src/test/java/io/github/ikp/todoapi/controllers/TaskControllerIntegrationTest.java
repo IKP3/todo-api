@@ -5,11 +5,9 @@ import static org.hamcrest.Matchers.hasSize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.ikp.todoapi.TestDataUtil;
-import io.github.ikp.todoapi.domain.dto.TaskDto;
-import io.github.ikp.todoapi.domain.dto.UserDto;
+import io.github.ikp.todoapi.domain.dto.TaskRequestDto;
 import io.github.ikp.todoapi.domain.entities.TaskEntity;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
-import io.github.ikp.todoapi.repositories.UserRepository;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -47,7 +45,7 @@ public class TaskControllerIntegrationTest {
     UserEntity userEntity = TestDataUtil.createTestUser();
     UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
-    TaskDto taskEntity = TestDataUtil.createTestTaskDto();
+    TaskRequestDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/users/"+savedUser.getId()+"/tasks")
@@ -64,7 +62,7 @@ public class TaskControllerIntegrationTest {
     UserEntity userEntity = TestDataUtil.createTestUser();
     UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
-    TaskDto taskEntity = TestDataUtil.createTestTaskDto();
+    TaskRequestDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/users/"+savedUser.getId() + 1+"/tasks")
@@ -81,7 +79,7 @@ public class TaskControllerIntegrationTest {
     UserEntity userEntity = TestDataUtil.createTestUser();
     UserEntity savedUser = userService.createOrUpdateUser(userEntity);
 
-    TaskDto taskEntity = TestDataUtil.createTestTaskDto();
+    TaskRequestDto taskEntity = TestDataUtil.createTestTaskDto();
     String taskJson = objectMapper.writeValueAsString(taskEntity);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/users/"+savedUser.getId()+"/tasks")
@@ -341,10 +339,10 @@ public class TaskControllerIntegrationTest {
 
     TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
 
-    TaskDto taskDto = TestDataUtil.createTestTaskDto();
-    taskDto.setDescription(null);
-    taskDto.setCompleted(true);
-    String taskJson = objectMapper.writeValueAsString(taskDto);
+    TaskRequestDto TaskRequestDto = TestDataUtil.createTestTaskDto();
+    TaskRequestDto.setDescription(null);
+    TaskRequestDto.setCompleted(true);
+    String taskJson = objectMapper.writeValueAsString(TaskRequestDto);
 
     mockMvc.perform(
         MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+savedTaskEntity.getId())
@@ -365,10 +363,10 @@ public class TaskControllerIntegrationTest {
     TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
 
 
-    TaskDto taskDto = TestDataUtil.createTestTaskDto();
-    taskDto.setDescription(null);
-    taskDto.setCompleted(true);
-    String taskJson = objectMapper.writeValueAsString(taskDto);
+    TaskRequestDto TaskRequestDto = TestDataUtil.createTestTaskDto();
+    TaskRequestDto.setDescription(null);
+    TaskRequestDto.setCompleted(true);
+    String taskJson = objectMapper.writeValueAsString(TaskRequestDto);
 
     mockMvc.perform(
         MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+"/tasks/"+taskEntity.getId() + 1)
@@ -389,10 +387,10 @@ public class TaskControllerIntegrationTest {
     TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
 
 
-    TaskDto taskDto = TestDataUtil.createTestTaskDto();
-    taskDto.setDescription(null);
-    taskDto.setCompleted(true);
-    String taskJson = objectMapper.writeValueAsString(taskDto);
+    TaskRequestDto TaskRequestDto = TestDataUtil.createTestTaskDto();
+    TaskRequestDto.setDescription(null);
+    TaskRequestDto.setCompleted(true);
+    String taskJson = objectMapper.writeValueAsString(TaskRequestDto);
 
     mockMvc.perform(
         MockMvcRequestBuilders.patch("/users/"+savedUserEntity.getId()+1+"/tasks/"+taskEntity.getId())
@@ -413,7 +411,7 @@ public class TaskControllerIntegrationTest {
 
     TaskEntity savedTaskEntity = taskService.createOrUpdateTask(taskEntity);
 
-    TaskDto taskUpdate = TestDataUtil.createTestTaskDto();
+    TaskRequestDto taskUpdate = TestDataUtil.createTestTaskDto();
     taskUpdate.setDescription(null);
     taskUpdate.setCompleted(true);
 

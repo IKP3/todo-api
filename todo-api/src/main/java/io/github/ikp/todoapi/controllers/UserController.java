@@ -1,8 +1,10 @@
 package io.github.ikp.todoapi.controllers;
 
-import io.github.ikp.todoapi.domain.dto.UserDto;
+import io.github.ikp.todoapi.domain.dto.UserRequestDto;
+import io.github.ikp.todoapi.domain.dto.UserResponseDto;
 import io.github.ikp.todoapi.domain.entities.UserEntity;
-import io.github.ikp.todoapi.mappers.Mapper;
+import io.github.ikp.todoapi.mappers.RequestMapper;
+import io.github.ikp.todoapi.mappers.ResponseMapper;
 import io.github.ikp.todoapi.services.UserService;
 import java.util.List;
 import java.util.Optional;
@@ -23,62 +25,64 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
   private final UserService userService;
-  private final Mapper<UserEntity, UserDto> userMapper;
-  public UserController(final UserService userService, final Mapper<UserEntity, UserDto> userMapper) {
+  private final ResponseMapper<UserEntity, UserResponseDto> userResponseMapper;
+  private final RequestMapper<UserEntity, UserRequestDto> userRequestMapper;
+  public UserController(final UserService userService, final ResponseMapper<UserEntity, UserResponseDto> userResponseMapper, final RequestMapper<UserEntity, UserRequestDto> userRequestMapper) {
     this.userService = userService;
-    this.userMapper = userMapper;
+    this.userResponseMapper = userResponseMapper;
+    this.userRequestMapper = userRequestMapper;
   }
   @PostMapping(path = "/users")
-  public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-    UserEntity userEntity = userMapper.mapFrom(userDto);
+  public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto userRequestDto) {
+    UserEntity userEntity = userRequestMapper.mapFrom(userRequestDto);
     UserEntity savedUserEntity = userService.createOrUpdateUser(userEntity);
-    return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
+    return new ResponseEntity<>(userResponseMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
   }
   @GetMapping(path = "/users/{userId}")
-  public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
+  public ResponseEntity<UserResponseDto> getUser(@PathVariable Long userId) {
     Optional<UserEntity> foundUser = userService.getUser(userId);
 
     return foundUser.map(userEntity -> {
-      UserDto userDto = userMapper.mapTo(userEntity);
-      return new ResponseEntity<>(userDto, HttpStatus.OK);
+      UserResponseDto userResponseDto = userResponseMapper.mapTo(userEntity);
+      return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
   @GetMapping(path = "/users")
-  public Page<UserDto> getMultipleUsers(Pageable pageable) {
+  public Page<UserResponseDto> getMultipleUsers(Pageable pageable) {
     Page<UserEntity> users = userService.getMultipleUsers(pageable);
-    return users.map(userMapper::mapTo);
+    return users.map(userResponseMapper::mapTo);
   }
   @GetMapping(path = "/users/all")
-  public List<UserDto> getAllUsers() {
+  public List<UserResponseDto> getAllUsers() {
     List<UserEntity> users = userService.getMultipleUsers();
     return users.stream()
-        .map(userMapper::mapTo)
+        .map(userResponseMapper::mapTo)
         .collect(Collectors.toList());
   }
   @PutMapping(path = "/users/{userId}")
-  public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
+  public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto) {
 
     if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();
     }
-    UserEntity userEntity = userMapper.mapFrom(userDto);
+    UserEntity userEntity = userRequestMapper.mapFrom(userRequestDto);
     userEntity.setId(userId);
     UserEntity updated = userService.createOrUpdateUser(userEntity);
 
-    return ResponseEntity.ok(userMapper.mapTo(updated));
+    return ResponseEntity.ok(userResponseMapper.mapTo(updated));
   }
   @PatchMapping(path = "/users/{userId}")
-  public ResponseEntity<UserDto> partialUpdateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
+  public ResponseEntity<UserResponseDto> partialUpdateUser(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto) {
 
     if (!userService.existsById(userId)) {
       return ResponseEntity.notFound().build();
     }
 
-    UserEntity userEntity = userMapper.mapFrom(userDto);
+    UserEntity userEntity = userRequestMapper.mapFrom(userRequestDto);
     userEntity.setId(userId);
     UserEntity updated = userService.partialUpdateUser(userId,userEntity);
 
-    return ResponseEntity.ok(userMapper.mapTo(updated));
+    return ResponseEntity.ok(userResponseMapper.mapTo(updated));
   }
   @DeleteMapping(path = "/users/{userId}")
   public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
