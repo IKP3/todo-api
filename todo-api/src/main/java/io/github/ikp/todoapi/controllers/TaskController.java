@@ -8,6 +8,7 @@ import io.github.ikp.todoapi.mappers.ResponseMapper;
 import io.github.ikp.todoapi.services.TaskService;
 import io.github.ikp.todoapi.services.UserService;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RequestMapping(path = "/api/v1/users")
 @RestController
@@ -45,8 +47,13 @@ public class TaskController {
         .map(user -> {
           TaskEntity task = taskRequestMapper.mapFrom(taskRequestDto);
           task.setUser(user);
-          TaskEntity saved = taskService.createOrUpdateTask(task);
-          return new ResponseEntity<>(taskResponseMapper.mapTo(saved), HttpStatus.CREATED);
+          TaskEntity savedTaskEntity = taskService.createOrUpdateTask(task);
+          URI location = ServletUriComponentsBuilder
+              .fromCurrentRequest()
+              .path("/{id}")
+              .buildAndExpand(savedTaskEntity.getId())
+              .toUri();
+          return ResponseEntity.created(location).body(taskResponseMapper.mapTo(savedTaskEntity));
         })
         .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }

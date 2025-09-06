@@ -7,6 +7,7 @@ import io.github.ikp.todoapi.mappers.RequestMapper;
 import io.github.ikp.todoapi.mappers.ResponseMapper;
 import io.github.ikp.todoapi.services.UserService;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RequestMapping(path = "/api/v1/users")
 @RestController
@@ -39,7 +41,16 @@ public class UserController {
   public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
     UserEntity userEntity = userRequestMapper.mapFrom(userRequestDto);
     UserEntity savedUserEntity = userService.createOrUpdateUser(userEntity);
-    return new ResponseEntity<>(userResponseMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
+
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{id}")
+        .buildAndExpand(savedUserEntity.getId())
+        .toUri();
+
+    return ResponseEntity
+        .created(location)
+        .body(userResponseMapper.mapTo(savedUserEntity));
   }
   @GetMapping(path = "/{userId}")
   public ResponseEntity<UserResponseDto> getUser(@PathVariable Long userId) {
