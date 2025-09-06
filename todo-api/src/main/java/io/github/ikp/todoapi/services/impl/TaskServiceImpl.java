@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -23,17 +22,17 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public Optional<TaskEntity> getTask(Long userId, Long taskId) {
-    return taskRepository.findByIdAndUserId(userId, taskId);
+    return taskRepository.findByUser_IdAndId(userId, taskId);
   }
 
   @Override
   public List<TaskEntity> getMultipleTasks(Long userId) {
-    return taskRepository.findByUserId(userId);
+    return taskRepository.findAllByUser_Id(userId);
   }
 
   @Override
   public Page<TaskEntity> getMultipleTasks(Long userId, Pageable pageable) {
-    return taskRepository.findByUserId(userId, pageable);
+    return taskRepository.findAllByUser_Id(userId, pageable);
   }
 
   @Override
@@ -44,7 +43,7 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public TaskEntity partialUpdate(Long userId,Long taskId,TaskEntity taskEntity) {
     taskEntity.setId(taskId);
-    return taskRepository.findByIdAndUserId(userId,taskId).map(existingTask ->{
+    return taskRepository.findByUser_IdAndId(userId,taskId).map(existingTask ->{
       Optional.ofNullable(taskEntity.getDescription()).ifPresent(existingTask::setDescription);
       Optional.of(taskEntity.isCompleted()).ifPresent(existingTask::setCompleted);
       return taskRepository.save(existingTask);
