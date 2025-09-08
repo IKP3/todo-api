@@ -1,14 +1,25 @@
 services:
   db:
     image: postgres:16
-    ports:
-      - "5432:5432"
-    restart: always
     environment:
+      POSTGRES_DB: tododb
       POSTGRES_USER: dbuser
       POSTGRES_PASSWORD: dbpassword
-      POSTGRES_DB: tododb
     volumes:
       - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/tododb
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=dbpassword
+    depends_on:
+      - db
+    restart: unless-stopped
 volumes:
   db-data:
